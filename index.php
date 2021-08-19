@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>Bond Web Service Demo</title>
+<title>Album Web Service Demo</title>
 <style>
 	body {font-family:georgia;}
 	.film{
@@ -8,7 +8,7 @@
 		border-radius: 5px;
 		padding: 5px;
 		margin-bottom:5px;
-		position:relative;	
+		position:relative;    
 	}
 	.pic{
 		position:absolute;
@@ -28,14 +28,17 @@ $(document).ready(function() {
 });	
 function loadAJAX(cat)
 {
-	//AJAX connection will go here
-    //alert('cat is: ' + cat);
-	$.ajax({
-		type:"GET",
-		dataType: "json",
-		url: "api.php?cat=" + cat,
-		success:bondJSON
-	});
+   $.ajax({
+       type: "GET",
+       dataType: "json",
+       url: "api.php?cat=" + cat,
+       success: bondJSON,
+       error: function(xhr, status, error){
+        let errorMessage = xhr.status + ': ' + xhr.statusText
+        alert('Error - ' + errorMessage);
+    }
+ 
+   });
 }
     
 function toConsole(data)
@@ -44,50 +47,54 @@ function toConsole(data)
 }
 function bondJSON(data){
 //JSON processing data goes here
+	
 	//using this I can see the object in the console
 	console.log(data);
-	
 	//this defines the type of info returned
 	$('#filmtitle').html(data.title);
 	$('#films').html('');
-	$.each(data.films,function(i,item){
+	
+	$.each(data.albums,function(i,item){
 		let str = bondTemplate(item);
 		$('<div></div>').html(str).appendTo('#films');
 	});
+	
 	//in this way we can see all of the data on the page
-	/*
+	
 	let myData = JSON.stringify(data,null,4);
 	myData = '<pre>' + myData + '</pre>';
 	$("#output").html(myData);
-	*/
 	
 	//this works, but the text is all bunched up
 	//$("#output").text(JSON.stringify(data));
 }
-function bondTemplate(film){
+function bondTemplate(album){
 	return `
 		<div class="film">
-			<b>Film:</b> ${film.Film}<br />
-			<b>Title:</b> ${film.Title}<br />
-			<b>Year:</b> ${film.Year}<br />
-			<b>Director:</b> ${film.Director}<br />
-			<b>Producers:</b> ${film.Producers}<br />
-			<b>Writers:</b> ${film.Writers}<br />
-			<b>Composer:</b> ${film.Composer}<br />
-			<b>Bond:</b> ${film.Bond}<br />
-			<b>Budget:</b> ${film.Budget}<br />
-			<b>Box Office:</b> ${film.BoxOffice}<br />
-			<div class="pic"><img src="thumbnails/${film.Image}" /></div>
-		</div>	
+			<b>Year:</b> ${album.Year}<br />
+			<b>Artist:</b> ${album.Artist}<br />
+			<b>Title:</b> ${album.Title}<br />
+			<b>Sales:</b> ${album.Sales}<br />
+			<b>Genre:</b> ${album.Genre}<br />
+			<div class="pic"><img src="thumbnails/${album.Image}" /></div>
+		</div>
 	`;
 }
+/*
+"Year": 1996,
+            "Artist": "Tupac",
+            "Title": "All Eyes On Me",
+            "Sales": 5000000,
+            "Genre": "Rap",
+            "Image": "tupac.jpg"
+*/
 </script>
 </head>
 	<body>
-	<h1>Bond Web Service</h1>
-		<a href="year" class="category">Bond Films By Year</a><br />
-		<a href="box" class="category">Bond Films By International Box Office Totals</a>
-		<h3 id="filmtitle">Title Will Go Here</h3>	
+	<h1>Album Web Service</h1>
+		<a href="year" class="category">Albums By Year</a><br />
+		<a href="genre" class="category">Albums By Genre</a>
+		<h3 id="filmtitle">Title Will Go Here</h3>
 		<div id="films">
 			<!--
 			<div class="film">
